@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wearable Brain Books Upload System</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #2ecc71;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(44, 62, 80, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid var(--secondary);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--secondary);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin: 20px 0;
+            color: var(--secondary);
+        }
+        
+        h3 {
+            font-size: 1.4rem;
+            margin: 15px 0;
+            color: var(--secondary);
+        }
+        
+        .intro {
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .card {
+            background: rgba(52, 73, 94, 0.7);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .book-card {
+            background: rgba(236, 240, 241, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            background: rgba(52, 152, 219, 0.2);
+        }
+        
+        .book-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+        
+        .book-code {
+            font-family: monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: inline-block;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            background: var(--secondary);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        .command-btn {
+            background: var(--accent);
+        }
+        
+        .command-btn:hover {
+            background: #c0392b;
+        }
+        
+        .upload-btn {
+            background: var(--success);
+        }
+        
+        .upload-btn:hover {
+            background: #27ae60;
+        }
+        
+        .console {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            min-height: 150px;
+            font-family: monospace;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+        
+        .console-line {
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        .success {
+            color: var(--success);
+        }
+        
+        .error {
+            color: var(--accent);
+        }
+        
+        .warning {
+            color: #f39c12;
+        }
+        
+        .info {
+            color: var(--secondary);
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid var(--secondary);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            margin-bottom: 20px;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: var(--secondary);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--secondary);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Wearable Brain Books Upload System</h1>
+            <p>Interactive Interface for Neural Codec Uploads</p>
+        </header>
+        
+        <div class="intro">
+            <p>This system allows you to manage and upload Wearable Brain Books using the proprietary codec system developed by David Gomadza. Follow the instructions to convert, upload, and experience books directly through neural interfaces.</p>
+        </div>
+        
+        <div class="card">
+            <h2>Current Upload Status</h2>
+            <div class="status">
+                <p>System: <span class="success">Online</span></p>
+                <p>Neural Interface: <span class="success">Connected</span></p>
+                <p>Codec Database: <span id="book-count">72</span> Books Loaded</p>
+            </div>
+            <div class="progress-bar">
+                <div class="progress" id="system-progress" style="width: 75%"></div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Control Console</h2>
+            <div class="controls">
+                <button id="scan-btn" class="command-btn">Scan Neural Interface</button>
+                <button id="init-btn" class="command-btn">Initialize Codec System</button>
+                <button id="upload-all-btn" class="upload-btn">Upload All Books</button>
+                <button id="clear-btn">Clear Console</button>
+            </div>
+            
+            <div class="console" id="console">
+                <div class="console-line info">System initialized. Ready for commands.</div>
+                <div class="console-line">>> Wearable Brain Books Codec System v2.4</div>
+                <div class="console-line">>> Copyright © 2024 David Gomadza</div>
+                <div class="console-line">>> Neural interface detected: OK</div>
+            </div>
+            
+            <div class="controls">
+                <input type="text" class="search-box" id="book-search" placeholder="Search for books by title or code...">
+            </div>
+        </div>
+        
+        <h2>Available Wearable Brain Books</h2>
+        <p>Select a book to upload to your neural interface:</p>
+        
+        <div class="grid" id="books-grid">
+            <!-- Books will be dynamically added here -->
+        </div>
+        
+        <div class="card">
+            <h2>Upload Commands</h2>
+            <div class="controls">
+                <button class="command-btn" onclick="issueCommand('UPLOAD')">UPLOAD</button>
+                <button class="command-btn" onclick="issueCommand('READ')">READ</button>
+                <button class="command-btn" onclick="issueCommand('CLOSE')">CLOSE</button>
+                <button class="command-btn" onclick="issueCommand('UNLOAD')">UNLOAD</button>
+                <button class="command-btn" onclick="issueCommand('EXIT')">EXIT</button>
+            </div>
+            
+            <h3>Voice Command Simulator</h3>
+            <div class="controls">
+                <input type="text" class="search-box" id="voice-command" placeholder="Say command...">
+                <button onclick="issueVoiceCommand()">Execute Voice Command</button>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Conversion Tools</h2>
+            <p>Convert standard books to Wearable Brain Books format:</p>
+            <ol>
+                <li>Open book in text editor</li>
+                <li>Clear all formatting</li>
+                <li>Convert to lowercase</li>
+                <li>Remove punctuation</li>
+                <li>Remove line spacing</li>
+                <li>Save as plain text</li>
+                <li>Generate code with Digital Analogue Converter</li>
+            </ol>
+            <div class="controls">
+                <button onclick="simulateConversion()">Simulate Conversion</button>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2024 David Gomadza | <a href="http://www.twofuture.world/" style="color: #3498db;">www.twofuture.world</a></p>
+            <p>Wearable Brain Books Technology - Vol 2 of ISBN: 9798323522620</p>
+        </footer>
+    </div>
+
+    <script>
+        // Book data from the document
+        const books = [
+            { id: 1, title: "Thoughts To Word or Audio", code: "76854" },
+            { id: 2, title: "Decoding the Brain Debunking the Misconceptions and Theories", code: "789838" },
+            { id: 3, title: "DATESTAMP:28 March 2022 Thoughts to Word or Audio. Volume III", code: "7648381" },
+            { id: 4, title: "Genesis Brain Language Construction In Progress", code: "78984821" },
+            { id: 5, title: "Brain Code. The Benchmark of Decoding the Brain.", code: "867838692" },
+            { id: 6, title: "How To Decode God, Creation, The Tree Of Life, Angels & Demons, The Devil, The Afterlife, The Underworld, The Brain, The Planets and The Universe.", code: "873898785" },
+            { id: 7, title: "Brain Language Dictionary", code: "889858321" },
+            { id: 8, title: "Encyclopedia of Decoding DNA sequence", code: "198385867" },
+            { id: 9, title: "The Time Traveler. Back to the Assassination of Robert Kennedy", code: "38678982" },
+            { id: 10, title: "Proof of Aliens on Mars. A Must Read If You Are Serious About Mars.", code: "718598386" },
+            { id: 11, title: "How to make love to a woman", code: "71854321" },
+            { id: 12, title: "As On Earth As In Heaven As It Is In Humans.", code: "189867387" },
+            { id: 13, title: "Detailed Specification of the Decoding Device", code: "7828519" },
+            { id: 14, title: "Detailed Specification Vol II", code: "78389787" },
+            { id: 15, title: "The Electromagnetic Brain Waves Triangle", code: "28598678" },
+            { id: 16, title: "Encyclopedia of Decoding the Brain", code: "378928" },
+            { id: 17, title: "Decoding the Egyptian Pyramids", code: "18487685" },
+            { id: 18, title: "Celebrities' Reset Switch. The 'Benjamin Button' Effect.", code: "12854367" },
+            { id: 19, title: "Dictionary of The Codes Of Life", code: "287641084" },
+            { id: 20, title: "Request For the Grant of a Patent", code: "38678185" },
+            { id: 21, title: "A Brain Reader and A Brain Nerve Impulses", code: "38788281" },
+            { id: 22, title: "Natural God Intelligence [NGI]. Brain-Peripherals-Databases-Interface [BPDI]", code: "285486718" },
+            { id: 23, title: "Brain Action Potentials and their Corresponding Nerve Impulses", code: "7785987218" },
+            { id: 24, title: "Brain Codes. How The Brain Interprets The Universe In Numbers.", code: "7787613852" },
+            { id: 25, title: "Sabotage! By .trafficofficer. Tesla Car Accident on 27 February 2021.", code: "187285876" },
+            { id: 26, title: "4 Brains Natural God Intelligence", code: "78218485" },
+            { id: 27, title: "Genesis 2024 The Year of Increased Technological Advancement.", code: "3839785" },
+            { id: 28, title: "Yahweh's Message", code: "453848210" },
+            { id: 29, title: "Natural God Intelligence [NGI]. Brain-Peripherals-Databases-Interface [BPDI]", code: "287618410" },
+            { id: 30, title: "Money for the Souls", code: "3878898274" },
+            { id: 31, title: "Brain Digital Decipher", code: "2811826789326" },
+            { id: 32, title: "Brain Codes. How The Brain Interprets The Universe In Numbers.", code: "85978284185" },
+            { id: 33, title: "Body Codes. All and Everything in Numbers.", code: "86528118543202" },
+            { id: 34, title: "Brain Power. How to Track and Kill your Enemies.", code: "851918762850" },
+            { id: 35, title: "Tomorrow's World Order Answering the critics", code: "28788184828" },
+            { id: 36, title: "Electromagnetic Waves Token", code: "22185286110" },
+            { id: 37, title: "Encyclopedia of Decoding Vision", code: "789767728418" },
+            { id: 38, title: "Ask 80 000 of Anything and The Laws of The Universe Will Give It to You. The Trick Behind All Cryptocurrency Heists.", code: "28778576385" },
+            { id: 39, title: "How To make Electrical Batteries That Lasts", code: "28678948358" },
+            { id: 40, title: "40 steps to make Any Woman have an Orgasm", code: "287289140" },
+            { id: 41, title: "Encyclopedia of Decoding Vision. How the Brain Processes sight.", code: "28677898285" },
+            { id: 42, title: "Spicing, Arousing & Stimulating Things Up. 40 Steps to Make Any Woman Have an Orgasm.", code: "19248517690" },
+            { id: 43, title: "Encyclopedia of Decoding Speech. How the Brain Process Speech.", code: "772832198469" },
+            { id: 44, title: "Encyclopedia of Decoding Thinking. How the brain thinks.", code: "" },
+            { id: 45, title: "Encyclopedia of Decoding Brain Senses. How the Brain Processes The Senses Of Touch, Sight, Hearing, Smell and Taste.", code: "78986832154" },
+            { id: 46, title: "ALL HUMANS HAVE 4 BRAINS JUST AS GOD.", code: "778598324180" },
+            { id: 47, title: "Evelina the Alpha", code: "8978685284", author: "David Gomadza" },
+            { id: 48, title: "Evelina the Omega", code: "77859838714", author: "David Gomadza" },
+            { id: 49, title: "Evelina God's Dilemma Solved", code: "78654329", author: "David Gomadza" },
+            { id: 50, title: "Evelina New World", code: "78654385", author: "David Gomadza" },
+            { id: 51, title: "Tomorrow's World Order", code: "7768528312", author: "David Gomadza" },
+            { id: 52, title: "Tomorrow's World Order Dealing with the threats of invasion", code: "7819285765832", author: "David Gomadza" },
+            { id: 53, title: "Evolution of Democracy", code: "78983857159", author: "David Gomadza" },
+            { id: 54, title: "The GreatShift 2023", code: "78521908576", author: "David Gomadza" },
+            { id: 55, title: "The Constitution. Tomorrow's World Order", code: "7898385786790", author: "David Gomadza" },
+            { id: 56, title: "Tomorrow's World Order Official Strategic Launch", code: "7898385789240", author: "David Gomadza" },
+            { id: 57, title: "All wars must end by June 2024", code: "773876387498", author: "David Gomadza" },
+            { id: 58, title: "Culling The sad reality of the IMF and World Bank loans as triggers of the law.", code: "9838578671564832", author: "David Gomadza" },
+            { id: 59, title: "A perfect prediction Russia-Ukraine War Prediction", code: "7754879838572", author: "David Gomadza" },
+            { id: 60, title: "An analysis of Evelina the novel series and the film scripts", code: "7738598720285", author: "David Gomadza" },
+            { id: 61, title: "Antitrust laws the case of Facebook v FTC", code: "779858764382", author: "David Gomadza" },
+            { id: 62, title: "Russia and Ukraine's Peace Treaty", code: "77859823848", author: "David Gomadza" },
+            { id: 63, title: "Mass Murder the West Behind the Pandemic and the Russia", code: "7798385789214", author: "David Gomadza" },
+            { id: 64, title: "An order by the president of Tomorrow's World Order to send Peace keeping troop. ANSWERING", code: "8776778921487", author: "David Gomadza" },
+            { id: 65, title: "381 Days to Go. Russia-Ukraine War.", code: "99786431897210", author: "David Gomadza" },
+            { id: 66, title: "Fortfied Defensive Training. Training to Build Massive Walls Around Vital Organs", code: "77983857218710", author: "David Gomadza" },
+            { id: 67, title: "White paper Gtps.finance", code: "77285192876", author: "David Gomadza" },
+            { id: 68, title: "Whitepaper Tomorrow's World Order", code: "9978483210687", author: "David Gomadza" },
+            { id: 69, title: "New Single Reserve Global Currency", code: "789832185498", author: "David Gomadza" },
+            { id: 70, title: "Direct Response to the Commission on Race and Ethnic Disparities Report.", code: "789865418540", author: "David Gomadza" },
+            { id: 71, title: "Irredeemable Annuities: The Slavery Abolishing Act Of 1833", code: "778928385498267", author: "David Gomadza" },
+            { id: 72, title: "The First Global President of the World's Russia-Ukraine Peace Plan.", code: "6628591360828", author: "David Gomadza" },
+            { id: 73, title: "COURT CASE DAVID GOMADZA/ TOMORROW'S WORLD ORDER V NHS, Great Britain.", code: "77483899068523", author: "David Gomadza" },
+            { id: 74, title: "CABAL SKRPT [1665-70s script] A Stories Prediction", code: "7789324892015", author: "David Gomadza" },
+            { id: 75, title: "FREE JULIAN ASSANGE Escalate-to-De Escalate", code: "78983478237148", author: "David Gomadza" },
+            { id: 76, title: "The Counter. As a Bargaining Tool.", code: "778598324768510", author: "David Gomadza" }
+        ];
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderBooks(books);
+            document.getElementById('book-count').textContent = books.length;
+            
+            // Add event listeners
+            document.getElementById('scan-btn').addEventListener('click', function() {
+                addToConsole(">> Scanning neural interface...", "info");
+                setTimeout(function() {
+                    addToConsole(">> Neural interface confirmed. Ready for uploads.", "success");
+                }, 1500);
+            });
+            
+            document.getElementById('init-btn').addEventListener('click', function() {
+                addToConsole(">> Initializing codec system...", "info");
+                simulateProgress(70);
+                setTimeout(function() {
+                    addToConsole(">> Codec system initialized successfully.", "success");
+                    addToConsole(">> All codecs are now available for neural upload.", "info");
+                }, 2000);
+            });
+            
+            document.getElementById('upload-all-btn').addEventListener('click', function() {
+                addToConsole(">> Preparing to upload all books...", "warning");
+                simulateProgress(10);
+                
+                let progress = 10;
+                const interval = setInterval(function() {
+                    progress += 5;
+                    simulateProgress(progress);
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        setTimeout(function() {
+                            addToConsole(">> All books uploaded to neural interface successfully.", "success");
+                            addToConsole(">> Use READ command to access content.", "info");
+                        }, 500);
+                    }
+                }, 200);
+            });
+            
+            document.getElementById('clear-btn').addEventListener('click', function() {
+                document.getElementById('console').innerHTML = '';
+                addToConsole("Console cleared.", "info");
+            });
+            
+            document.getElementById('book-search').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                if (searchTerm.length === 0) {
+                    renderBooks(books);
+                } else {
+                    const filteredBooks = books.filter(book => 
+                        book.title.toLowerCase().includes(searchTerm) || 
+                        book.code.includes(searchTerm) ||
+                        (book.author && book.author.toLowerCase().includes(searchTerm))
+                    );
+                    renderBooks(filteredBooks);
+                }
+            });
+        });
+
+        // Render books to the grid
+        function renderBooks(booksArray) {
+            const grid = document.getElementById('books-grid');
+            grid.innerHTML = '';
+            
+            booksArray.forEach(book => {
+                const bookElement = document.createElement('div');
+                bookElement.className = 'book-card';
+                bookElement.innerHTML = `
+                    <div class="book-title">${book.title}</div>
+                    ${book.author ? `<div class="book-author">By ${book.author}</div>` : ''}
+                    <div class="book-code">Code: ${book.code || 'N/A'}</div>
+                    <button onclick="uploadBook(${book.id})">Upload</button>
+                `;
+                grid.appendChild(bookElement);
+            });
+        }
+
+        // Add message to console
+        function addToConsole(message, type = "") {
+            const consoleElement = document.getElementById('console');
+            const line = document.createElement('div');
+            line.className = `console-line ${type}`;
+            line.textContent = message;
+            consoleElement.appendChild(line);
+            consoleElement.scrollTop = consoleElement.scrollHeight;
+        }
+
+        // Simulate progress bar
+        function simulateProgress(percent) {
+            const progressBar = document.getElementById('system-progress');
+            progressBar.style.width = percent + '%';
+        }
+
+        // Upload a book
+        function uploadBook(bookId) {
+            const book = books.find(b => b.id === bookId);
+            if (!book) return;
+            
+            addToConsole(`>> Preparing to upload: ${book.title}`, "info");
+            simulateProgress(30);
+            
+            setTimeout(() => {
+                addToConsole(`>> Converting code: ${book.code}`, "info");
+                simulateProgress(60);
+                
+                setTimeout(() => {
+                    addToConsole(`>> Uploading to neural interface...`, "info");
+                    simulateProgress(90);
+                    
+                    setTimeout(() => {
+                        addToConsole(`>> Upload complete: ${book.title}`, "success");
+                        simulateProgress(100);
+                    }, 1000);
+                }, 1000);
+            }, 1000);
+        }
+
+        // Issue a command
+        function issueCommand(command) {
+            const commands = {
+                'UPLOAD': 'Preparing for upload. Please select a book.',
+                'READ': 'Reading content directly to neural interface...',
+                'CLOSE': 'Closing current book and saving progress.',
+                'UNLOAD': 'Unloading book from memory.',
+                'EXIT': 'Exiting Wearable Brain Books system. Goodbye.'
+            };
+            
+            if (commands[command]) {
+                addToConsole(`>> ${commands[command]}`, "info");
+            } else {
+                addToConsole(`>> Unknown command: ${command}`, "error");
+            }
+        }
+
+        // Issue voice command
+        function issueVoiceCommand() {
+            const commandInput = document.getElementById('voice-command');
+            const command = commandInput.value.trim().toUpperCase();
+            
+            if (command) {
+                addToConsole(`>> Say: ${command}`, "warning");
+                issueCommand(command);
+                commandInput.value = '';
+            }
+        }
+
+        // Simulate book conversion
+        function simulateConversion() {
+            addToConsole(">> Starting book conversion process...", "info");
+            
+            const steps = [
+                "Clearing formatting...",
+                "Converting to lowercase...",
+                "Removing punctuation...",
+                "Removing line spacing...",
+                "Saving as plain text...",
+                "Generating code with Digital Analogue Converter..."
+            ];
+            
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i < steps.length) {
+                    addToConsole(`>> ${steps[i]}`, "info");
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    addToConsole(">> Conversion complete. Book is now ready for neural upload.", "success");
+                }
+            }, 800);
+        }
+    </script>
+</body>
+</html>
